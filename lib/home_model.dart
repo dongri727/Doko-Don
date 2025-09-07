@@ -68,8 +68,8 @@ class HomeModel extends ChangeNotifier {
   }
 
   // --- Part selection ---
-  final List<String> parts = ['締太鼓', '大太鼓', '中太鼓A', '中太鼓B'];
-  int _partIndex = 0; // default: 締太鼓
+  final List<String> parts = ['〆', '大', '中A', '中B', '中C'];
+  int _partIndex = 2; // default: 中A
   int get partIndex => _partIndex;
   String get part => parts[_partIndex];
   void setPartIndex(int i) {
