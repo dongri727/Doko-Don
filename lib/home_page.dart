@@ -5,35 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'home_model.dart';
+import 'notes.dart';
 
 class HomePage extends StatelessWidget {
-  final items = [
-    'どん ',
-    'どど ',
-    'どこ ',
-    'どつ ',
-    'どか ',
-    'つッ ',
-    'つど ',
-    'つつ ',
-    'つく ',
-    'つか ',
-    'かッ ',
-    'かど ',
-    'かか ',
-    'から ',
-    'かつ ',
-    'スッ ',
-    'スど ',
-    'スつ ',
-    'スか ',
-    '',
-    'よお ',
-    'はっ ',
-    'それ ',
-    '',
-    ''
-  ];
+  final items = notes;
 
   HomePage({super.key});
 
@@ -69,15 +44,16 @@ class HomePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
                   child: ToggleButtons(
-                    isSelected: List.generate(4, (i) => i == model.partIndex),
+                    isSelected: List.generate(5, (i) => i == model.partIndex),
                     onPressed: (i) => model.setPartIndex(i),
                     borderRadius: BorderRadius.circular(8),
                     constraints: const BoxConstraints(minHeight: 40, minWidth: 72),
                     children: const [
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('締太鼓')),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('大太鼓')),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('中太鼓A')),
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('中太鼓B')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('〆')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('大')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('中Ａ')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('中Ｂ')),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('中Ｃ')),
                     ],
                   ),
                 ),
