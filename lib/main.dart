@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'theme.dart';
+import 'top_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Doko Don",
       theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.green,
+        appBarTheme: TaikoTheme.appBarTheme,
+        floatingActionButtonTheme: TaikoTheme.floatingActionButtonTheme,
       ),
 
-      home: HomePage(),
+      home: TopPage(),
     );
   }
 }
