@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'hint_page.dart';
 import 'home_page.dart';
 import 'edit_page.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:share_plus/share_plus.dart';
+
+import 'info.dart';
 
 
 class TopPage extends StatefulWidget {
@@ -97,13 +100,31 @@ class TopPageState extends State<TopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0x80ffd700), // 黄色系の色に設定 (例: Colors.yellow[700]
-        elevation: 6,
-        shadowColor: Colors.blueGrey[50],
-        shape:const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(8))),
-        title: const Text("せっとんどん")
+        title: const Text("せっとんどん"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const InfoPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.info_outline),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HintPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.question_mark_sharp),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -118,7 +139,7 @@ class TopPageState extends State<TopPage> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: const Image(image: AssetImage("assets/taiko-g.png")),
+                child: const Image(image: AssetImage("assets/images/taiko-g.png")),
               ),
             ),
             const SizedBox(height: 12),

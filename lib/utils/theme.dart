@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class TaikoTheme {
   static AppBarTheme appBarTheme = AppBarTheme(
+    centerTitle: true,
     backgroundColor: Color(0x80ffd700), 
     elevation: 6,
     shadowColor: Colors.blueGrey[50],

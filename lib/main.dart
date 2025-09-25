@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'theme.dart';
+import 'utils/theme.dart';
 import 'top_page.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: TaikoTheme.appBarTheme,
         floatingActionButtonTheme: TaikoTheme.floatingActionButtonTheme,
       ),
-
+      debugShowCheckedModeBanner: false,
       home: TopPage(),
     );
   }

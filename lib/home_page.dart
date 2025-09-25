@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 //import 'package:file_selector/file_selector.dart';
 import 'home_model.dart';
-import 'notes.dart';
+import 'utils/notes.dart';
 
 class HomePage extends StatelessWidget {
   final items = notes;

@@ -1,5 +1,5 @@
-name: taiko_fu
-description: "pour Paris Taiko Ensemble"
+name: doko_don
+description: "Simple Taiko Score Maker"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -15,14 +15,38 @@ dependencies:
   path_provider: ^2.1.3
   share_plus: ^10.0.0
   file_selector: ^1.0.4
+  url_launcher: ^6.3.1
+  flutter_native_splash: ^2.4.6
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
 
+flutter_native_splash:
+  color: "#111124" # 背景色（必須）
+  image: "assets/images/splash_768.png"
+  color_dark: '#111124'
+  image_dark: 'assets/images/splash_768.png'
+  fullscreen: true
+  android_12:
+    icon_background_color: '#111124'
+    image: 'assets/images/splash_1152.png'
+    icon_background_color_dark: '#111124'
+    image_dark: 'assets/images/splash_1152.png'
+
+  web: true # Webでは表示しない（必要に応じて）
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: 'assets/images/taiko-g.png'
+  adaptive_icon_background: '#5f9ea0'
+  adaptive_icon_foreground: 'assets/images/taiko-a.png'
+
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/images/
