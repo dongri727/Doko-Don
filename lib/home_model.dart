@@ -147,7 +147,7 @@ class HomeModel extends ChangeNotifier {
 
     if (_tokens.isEmpty) {
       spans.add(const TextSpan(
-        text: '（La partition s\'affiche ici.）',
+        text: '（The score is displayed here.）',
         style: TextStyle(color: Colors.black45, fontSize: 16),
       ));
     }

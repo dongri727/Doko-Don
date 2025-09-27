@@ -202,7 +202,6 @@ class TopPageState extends State<TopPage> {
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
         },
-        backgroundColor: Color(0x80ffd700),
         child: const Icon(Icons.add),
     ),
     );

@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Doko Don",
+      title: "DoDon",
       theme: ThemeData(
         appBarTheme: TaikoTheme.appBarTheme,
         floatingActionButtonTheme: TaikoTheme.floatingActionButtonTheme,

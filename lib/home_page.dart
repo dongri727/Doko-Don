@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-//import 'package:file_selector/file_selector.dart';
 import 'home_model.dart';
 import 'utils/notes.dart';
 
@@ -15,21 +13,35 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'faire une dictée';
+    final title = 'Beat Input';
 
     final mq = MediaQuery.of(context);
     final size = mq.size;
     final isPortrait = mq.orientation == Orientation.portrait;
     final isSmallWidth = size.width < 380;
+    final viewInsets = mq.viewInsets.bottom;
+    // iPad / tablet 判定（Flutter標準の shortestSide>=600 慣習）
+    final bool isTablet = mq.size.shortestSide >= 600;
+
+    // crossAxis と gridHeight の方針：
+    //  - iPhone: 横=5固定・縦=6行固定（余白が出ない計算を後段の LayoutBuilder で実施）
+    //  - iPad: 既存ロジック（縦=6 / 横=8）+ 高さは画面比率ベース
+    late final int crossAxis;
+    late final double adaptiveGridHeightForTablet;
+
+    if (isTablet) {
+      crossAxis = isPortrait ? 6 : 8;
+      adaptiveGridHeightForTablet = (((isPortrait ? size.height * 0.30 : size.height * 0.42) - viewInsets).clamp(180.0, 320.0));
+    } else {
+      crossAxis = 5; // iPhoneは常に5列
+      adaptiveGridHeightForTablet = 0; // 未使用
+    }
     // Adaptive sizes
     final double previewFontSize = isSmallWidth ? 18 : 20;
-    //final double buttonFontSize = isSmallWidth ? 14 : 16;
-/*     final double gridHeight = isPortrait
-        ? (size.height * 0.27).clamp(160.0, 260.0)
-        : 180.0; */
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
+      resizeToAvoidBottomInset: true,
       body: ChangeNotifierProvider<HomeModel>(
         create: (_) => HomeModel(),
         child: Consumer<HomeModel>(
@@ -57,6 +69,8 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                           onChanged: model.setTitle,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => FocusScope.of(context).unfocus(),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -165,37 +179,73 @@ class HomePage extends StatelessWidget {
                 // 4) Items Grid as a fixed-height bottom keyboard
                 SafeArea(
                   top: false,
-                  child: SizedBox(
-                    height: 240, // keyboard-like fixed height
-                    child: GridView.count(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      crossAxisCount: 5,
-                      childAspectRatio: 2.6,
-                      // compact rows
-                      padding: const EdgeInsets.all(8),
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      children: List.generate(items.length, (index) {
-                        final label = items[index];
-                        return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
-                              vertical: 4.0,
-                            ),
+                  child: isTablet
+                      ? AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: adaptiveGridHeightForTablet,
+                          child: GridView.count(
+                            physics: const ClampingScrollPhysics(),
+                            shrinkWrap: true,
+                            crossAxisCount: crossAxis,
+                            childAspectRatio: isSmallWidth ? 2.2 : 2.6,
+                            padding: const EdgeInsets.all(8),
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            children: List.generate(items.length, (index) {
+                              final label = items[index];
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                                ),
+                                onPressed: label.isEmpty ? null : () => model.appendText(label),
+                                child: Text(
+                                  label.isEmpty ? ' ' : label,
+                                  style: const TextStyle(fontSize: 16.0),
+                                ),
+                              );
+                            }),
                           ),
-                          onPressed: label.isEmpty
-                              ? null
-                              : () => model.appendText(label),
-                          child: Text(
-                            label.isEmpty ? ' ' : label,
-                            style: const TextStyle(fontSize: 16.0),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
+                        )
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            // iPhone用：5列×6行がぴったり収まる高さを計算し、余白を出さない
+                            const double paddingAll = 8.0;
+                            const double mainAxisSpacing = 8.0;
+                            const double crossAxisSpacing = 8.0;
+                            final double childAspect = isSmallWidth ? 2.2 : 2.6; // width/height
+                            final double totalHorizontal = paddingAll * 2 + crossAxisSpacing * (crossAxis - 1);
+                            final double cellWidth = (constraints.maxWidth - totalHorizontal) / crossAxis;
+                            final double cellHeight = cellWidth / childAspect;
+                            const int rows = 6;
+                            final double exactHeight = paddingAll * 2 + mainAxisSpacing * (rows - 1) + cellHeight * rows;
+
+                            return SizedBox(
+                              height: exactHeight,
+                              child: GridView.count(
+                                physics: const NeverScrollableScrollPhysics(), // 6行固定でスクロール不要
+                                shrinkWrap: true,
+                                crossAxisCount: crossAxis, // 5 列
+                                childAspectRatio: childAspect,
+                                padding: const EdgeInsets.all(paddingAll),
+                                mainAxisSpacing: mainAxisSpacing,
+                                crossAxisSpacing: crossAxisSpacing,
+                                children: List.generate(items.length, (index) {
+                                  final label = items[index];
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                                    ),
+                                    onPressed: label.isEmpty ? null : () => model.appendText(label),
+                                    child: Text(
+                                      label.isEmpty ? ' ' : label,
+                                      style: const TextStyle(fontSize: 16.0),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             );
@@ -219,7 +269,7 @@ class HomePage extends StatelessWidget {
           child: ListTile(
             leading: const Icon(Icons.save_alt),
             title: const Text(
-              'Enregistrer dans l\'application',
+              'Save?',
             ),
             onTap: () async {
               final csv = model.buildCsv();
@@ -230,7 +280,7 @@ class HomePage extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Enregistrement Réussi',
+                      'Saved!',
                       style: TextStyle(
                         color: Colors.green,
                         fontSize: 20),

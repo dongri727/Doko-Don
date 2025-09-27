@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'top_page.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 class CsvEditPage extends StatefulWidget {
   final File file;
   final String initialText;
+
   CsvEditPage({required this.file, required this.initialText});
 
   @override
@@ -35,16 +34,17 @@ class CsvEditPageState extends State<CsvEditPage> {
     return s.replaceAll('⏎', '');
   }
 
-
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialText);
 
-
     if (_showEol) {
       final vis = _visualizeEol(_controller.text);
-      _controller.value = TextEditingValue(text: vis, selection: TextSelection.collapsed(offset: vis.length));
+      _controller.value = TextEditingValue(
+        text: vis,
+        selection: TextSelection.collapsed(offset: vis.length),
+      );
     }
 
     _controller.addListener(() {
@@ -57,10 +57,15 @@ class CsvEditPageState extends State<CsvEditPage> {
         final sel = _controller.selection;
         final delta = newText.length - oldText.length;
         final newBase = sel.baseOffset == -1 ? -1 : (sel.baseOffset + delta);
-        final newExtent = sel.extentOffset == -1 ? -1 : (sel.extentOffset + delta);
+        final newExtent = sel.extentOffset == -1
+            ? -1
+            : (sel.extentOffset + delta);
         _controller.value = TextEditingValue(
           text: newText,
-          selection: TextSelection(baseOffset: newBase, extentOffset: newExtent),
+          selection: TextSelection(
+            baseOffset: newBase,
+            extentOffset: newExtent,
+          ),
         );
         _updatingText = false;
       }
@@ -70,17 +75,25 @@ class CsvEditPageState extends State<CsvEditPage> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      final raw = _showEol ? _stripEolMarks(_controller.text) : _controller.text;
+      final raw = _showEol
+          ? _stripEolMarks(_controller.text)
+          : _controller.text;
       await widget.file.writeAsString(raw);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved (overwritten).')),
+        const SnackBar(
+          content: Text(
+            'Saved (overwritten).',
+            style: TextStyle(color: Colors.green, fontSize: 20),
+          ),
+          backgroundColor: Colors.white,
+        ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to save: $e')));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -101,24 +114,26 @@ class CsvEditPageState extends State<CsvEditPage> {
         final sel = _controller.selection;
         final delta = nextText.length - current.length;
         final newBase = sel.baseOffset == -1 ? -1 : (sel.baseOffset + delta);
-        final newExtent = sel.extentOffset == -1 ? -1 : (sel.extentOffset + delta);
+        final newExtent = sel.extentOffset == -1
+            ? -1
+            : (sel.extentOffset + delta);
         _controller.value = TextEditingValue(
           text: nextText,
-          selection: TextSelection(baseOffset: newBase, extentOffset: newExtent),
+          selection: TextSelection(
+            baseOffset: newBase,
+            extentOffset: newExtent,
+          ),
         );
         _updatingText = false;
       });
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     final name = p.basename(widget.file.path);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(name),
-      ),
+      appBar: AppBar(title: Text(name)),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: TextField(
@@ -135,7 +150,9 @@ class CsvEditPageState extends State<CsvEditPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saving ? null : _save,
-        child: _saving ? const CircularProgressIndicator() : const Icon(Icons.save),
+        child: _saving
+            ? const CircularProgressIndicator()
+            : const Icon(Icons.save),
       ),
     );
   }

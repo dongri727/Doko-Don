@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'utils/discribe_card.dart';
+import 'utils/describe_card.dart';
 
 
 class InfoPage extends StatelessWidget {
@@ -42,7 +42,7 @@ class InfoPage extends StatelessWidget {
                   LaunchUrlContainer(
                     textContent: 'Ecole la Porte Privacy Policy',
                     url:
-                    'https://laporte727.github.io/ecole.la.porte/dokodon.html',
+                    'https://laporte727.github.io/ecole.la.porte/dodon.html',
                   ),
                 ],
               ),
